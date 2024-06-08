@@ -21,7 +21,7 @@
 
 (defvar-local cosmetic-transient-docco-status nil)
 
-;;;###autoload
+;;;###autoload (autoload 'cosmetic-transient "cosmetic-transient" nil 'interactive)
 (transient-define-prefix cosmetic-transient ()
   ["General status"
    :class transient-subgroups
