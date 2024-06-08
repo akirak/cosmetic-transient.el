@@ -1,5 +1,7 @@
 ;;; cosmetic-transient.el --- A transient for cosmetics on source code -*- lexical-binding: t -*-
 
+(require 'transient)
+
 (defgroup cosmetic-transient nil
   "A transient for cosmetics on source code"
   :group 'transient)
