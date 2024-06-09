@@ -1,0 +1,13 @@
+* Cosmetic Transient
+This Emacs transient command lets you dispatch tools such as formatters and linters interactively to improve the code quality.
+** Todo
+*** Formatting
+**** Formatting using the running language server
+- [X] eglot
+- [ ] lsp-mode
+**** Formatting using an external program
+- [X] Any formatter defined using [[https://github.com/purcell/emacs-reformatter][reformatter]]
+*** Linting
+- [ ] Integrating (possibly multiple) external programs for linting
+*** Documentation
+- [X] Integrate with [[https://github.com/akirak/docco.el][docco.el]] for editing documentation comments
