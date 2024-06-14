@@ -57,7 +57,7 @@
    ("dm"
     (lambda ()
       (cosmetic-transient--doc-comment-description "Module" 'module))
-    docco-edit-function-comment)]
+    docco-edit-module-comment)]
   (interactive)
   (setq cosmetic-transient-language-formatter
         (cosmetic-transient--language-formatter-settings))
