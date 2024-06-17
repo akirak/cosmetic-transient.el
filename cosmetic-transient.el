@@ -14,7 +14,11 @@
     (elixir-ts-mode
      :minor-mode mix-format-on-save-mode
      :buffer-formatter mix-format-buffer
-     :region-formatter mix-format-region))
+     :region-formatter mix-format-region)
+    (sql-mode
+     :minor-mode sqlformat-on-save-mode
+     :buffer-formatter sqlformat-buffer
+     :region-formatter sqlformat-region))
   "Alist of formatter settings for specific major modes."
   :type '(alist :key-type (symbol :tag "Major mode")
                 :value-type plist))
