@@ -1,7 +1,7 @@
 {
   outputs = {...}: {
     elisp-rice = {
-      packages = ["hello"];
+      packages = ["cosmetic-transient"];
     };
   };
 }
