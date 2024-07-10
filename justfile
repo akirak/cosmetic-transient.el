@@ -14,6 +14,10 @@ arch := shell('nix eval --expr builtins.currentSystem --impure --raw')
 show:
     nix flake show {{ rice-flake }} {{ common-options }}
 
+# Evaluate an attribute on the flake, e.g. just eval melpaRecipes.
+eval ATTR *OPTIONS:
+    nix eval {{rice-flake}}\#{{ATTR}} {{OPTIONS}} {{ common-options }}
+
 # Enter a shell for byte-compiling individual source files
 shell-compile:
     nix develop {{ rice-flake }}\#{{ emacs-version }}-for-{{ package }} {{ common-options }}
