@@ -96,7 +96,8 @@
       (list (when mode
               (list :key "fm"
                     :description (format "Mode: %s (%s)"
-                                         (if (symbol-value mode)
+                                         (if (and (boundp mode)
+                                                  (symbol-value mode))
                                              "Enabled"
                                            "Disabled")
                                          mode)
