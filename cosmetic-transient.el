@@ -32,6 +32,11 @@
 ;;; Code:
 
 (require 'transient)
+(require 'cl-lib)
+(require 'subr-x)
+
+(declare-function docco-comment-statuses "ext:docco")
+(declare-function eglot--languageId "eglot")
 
 (defgroup cosmetic-transient nil
   "A transient for cosmetics on source code"
