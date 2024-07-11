@@ -1,0 +1,49 @@
+name: Build the package
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.*'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.*'
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@V27
+
+      - id: matrix
+        run: |
+          echo "matrix=$(just eval github.matrix --json)" >> "$GITHUB_OUTPUT"
+
+  check-compile:
+    needs: generate-matrix
+
+    strategy:
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: cachix/install-nix-action@V27
+
+    - name: Byte compile
+      run: |
+        just \
+          --set package ${{ matrix.target }} \
+          --set emacs-version ${{ matrix.emacs }} \
+          check-compile
