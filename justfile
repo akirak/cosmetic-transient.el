@@ -11,8 +11,8 @@ package := "cosmetic-transient"
 arch := shell('nix eval --expr builtins.currentSystem --impure --raw')
 
 # Show the flake
-show:
-    nix flake show {{ rice-flake }} {{ common-options }}
+show *OPTIONS:
+    nix flake show {{ rice-flake }} {{ OPTIONS }} {{ common-options }}
 
 # Evaluate an attribute on the flake, e.g. just eval melpaRecipes.
 eval ATTR *OPTIONS:
