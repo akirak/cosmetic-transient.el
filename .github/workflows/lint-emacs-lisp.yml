@@ -1,0 +1,71 @@
+name: Lint Emacs Lisp source code
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.*'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'README.*'
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      include: ${{ steps.matrix.outputs.include }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@V27
+
+      - name: Get the matrix
+        id: matrix
+        run: |
+          echo >> "$GITHUB_OUTPUT" \
+            "include=$(nix eval "${RICE_FLAKE}#melpaRecipes" --json --apply '"attrs: builtins.attrValues (builtins.mapAttrs (package: recipe: { inherit package recipe; }) attrs)"' \
+            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}")"
+
+  melpazoid:
+    needs: generate-matrix
+
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.generate-matrix.outputs.include) }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: src
+
+    - uses: actions/checkout@v4
+      with:
+        repository: riscy/melpazoid
+        path: melpazoid
+
+    # Install Python and melpazoid in the official way.
+    # See https://github.com/riscy/melpazoid/blob/master/.github/workflows/test.yml
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+
+    - name: Install melpazoid
+      working-directory: melpazoid
+      run: |
+        sudo apt-get install emacs
+        emacs --version
+        python -m pip install --upgrade pip
+        pip install . mypy pytest black
+
+    - name: Check the package using melpazoid
+      working-directory: melpazoid
+      run: |
+         RECIPE='${{ matrix.recipe }}' LOCAL_REPO="${GITHUB_WORKSPACE}/src" make
