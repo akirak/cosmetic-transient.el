@@ -24,7 +24,7 @@ shell-compile:
 
 # Re-run byte-compile every time a file is modified
 watch-compile:
-    nix develop {{ rice-flake }}\#{{ emacs-version }}-for-{{ package }} {{ common-options }} -c bash -c 'echo >&2 Watching *.el; echo *.el | entr -p elisp-byte-compile /_'
+    nix develop {{ rice-flake }}\#{{ emacs-version }}-for-{{ package }} {{ common-options }} -c bash -c 'echo >&2 Watching *.el; ls *.el | entr -p elisp-byte-compile /_'
 
 # Byte-compile the package
 check-compile:
