@@ -12,6 +12,17 @@ on:
 
   workflow_dispatch:
 
+  workflow_call:
+    inputs:
+      rice-flake:
+        required: false
+        type: string
+        default: 'github:emacs-twist/rice-config'
+      melpa-flake:
+        required: false
+        type: string
+        default: 'github:melpa/melpa'
+
 concurrency:
   group: '${{ github.workflow }}-${{ github.ref }}'
   cancel-in-progress: true
@@ -34,8 +45,8 @@ jobs:
         id: matrix
         run: |
           echo "matrix=$(\
-            nix eval "${RICE_FLAKE}#github.matrix" \
-            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}" \
+            nix eval "${{ inputs.rice-flake }}#github.matrix" \
+            --override-input rice-src "path:$PWD" --override-input melpa "${{ inputs.melpa-flake }}" \
             --json)" >> "$GITHUB_OUTPUT"
 
   check-compile:
@@ -57,6 +68,6 @@ jobs:
       - name: Byte compile
         run: |
           nix build \
-            "${RICE_FLAKE}#checks.${{ matrix.arch }}.${{ matrix.target }}-compile-${{ matrix.emacs }}" \
-            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}" \
+            "${{ inputs.rice-flake }}#checks.${{ matrix.arch }}.${{ matrix.target }}-compile-${{ matrix.emacs }}" \
+            --override-input rice-src "path:$PWD" --override-input melpa "${{ inputs.melpa-flake }}" \
             --print-build-logs
