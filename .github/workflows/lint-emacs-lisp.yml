@@ -12,13 +12,16 @@ on:
 
   workflow_dispatch:
 
-concurrency:
-  group: '${{ github.workflow }}-${{ github.ref }}'
-  cancel-in-progress: true
-
-env:
-  RICE_FLAKE: github:emacs-twist/rice-config
-  MELPA_FLAKE: github:akirak/melpa/akirak
+  workflow_call:
+    inputs:
+      rice-flake:
+        required: false
+        type: string
+        default: 'github:emacs-twist/rice-config'
+      melpa-flake:
+        required: false
+        type: string
+        default: 'github:melpa/melpa'
 
 jobs:
   generate-matrix:
@@ -34,8 +37,8 @@ jobs:
         id: matrix
         run: |
           set -e
-          echo "include=$(nix eval "${RICE_FLAKE}#melpaRecipes" --json --apply 'attrs: builtins.attrValues (builtins.mapAttrs (package: recipe: { inherit package recipe; }) attrs)' \
-            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}")" \
+          echo "include=$(nix eval "${{ inputs.rice-flake }}#melpaRecipes" --json --apply 'attrs: builtins.attrValues (builtins.mapAttrs (package: recipe: { inherit package recipe; }) attrs)' \
+            --override-input rice-src "path:$PWD" --override-input melpa "${{ inputs.melpa-flake }}")" \
             >> "$GITHUB_OUTPUT"
 
   melpazoid:
