@@ -16,6 +16,10 @@ concurrency:
   group: '${{ github.workflow }}-${{ github.ref }}'
   cancel-in-progress: true
 
+env:
+  RICE_FLAKE: github:emacs-twist/rice-config
+  MELPA_FLAKE: github:akirak/melpa/akirak
+
 jobs:
   generate-matrix:
     runs-on: ubuntu-latest
@@ -29,9 +33,10 @@ jobs:
       - name: Get the matrix
         id: matrix
         run: |
-          echo >> "$GITHUB_OUTPUT" \
-            "include=$(nix eval "${RICE_FLAKE}#melpaRecipes" --json --apply '"attrs: builtins.attrValues (builtins.mapAttrs (package: recipe: { inherit package recipe; }) attrs)"' \
-            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}")"
+          set -e
+          echo "include=$(nix eval "${RICE_FLAKE}#melpaRecipes" --json --apply 'attrs: builtins.attrValues (builtins.mapAttrs (package: recipe: { inherit package recipe; }) attrs)' \
+            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}")" \
+            >> "$GITHUB_OUTPUT"
 
   melpazoid:
     needs: generate-matrix
