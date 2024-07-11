@@ -16,6 +16,10 @@ concurrency:
   group: '${{ github.workflow }}-${{ github.ref }}'
   cancel-in-progress: true
 
+env:
+  RICE_FLAKE: github:emacs-twist/rice-config
+  MELPA_FLAKE: github:akirak/melpa/akirak
+
 jobs:
   generate-matrix:
     runs-on: ubuntu-latest
@@ -26,9 +30,13 @@ jobs:
 
       - uses: cachix/install-nix-action@V27
 
-      - id: matrix
+      - name: Get the matrix
+        id: matrix
         run: |
-          echo "matrix=$(just eval github.matrix --json)" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(\
+            nix eval "${RICE_FLAKE}#github.matrix" \
+            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}" \
+            --json)" >> "$GITHUB_OUTPUT"
 
   check-compile:
     needs: generate-matrix
@@ -39,13 +47,16 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: cachix/install-nix-action@V27
+      - uses: cachix/install-nix-action@V27
+        with:
+          extra_nix_config: |
+            accept-flake-config = true
 
-    - name: Byte compile
-      run: |
-        just \
-          --set package ${{ matrix.target }} \
-          --set emacs-version ${{ matrix.emacs }} \
-          check-compile
+      - name: Byte compile
+        run: |
+          nix build \
+            "${RICE_FLAKE}#checks.${{ matrix.arch }}.${{ matrix.target }}-compile-${{ matrix.emacs }}" \
+            --override-input rice-src "path:$PWD" --override-input melpa "${MELPA_FLAKE}" \
+            --print-build-logs
