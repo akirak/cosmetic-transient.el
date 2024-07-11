@@ -28,7 +28,7 @@ watch-compile:
 
 # Byte-compile the package
 check-compile:
-    nix build {{ rice-flake }}\#checks.{{ arch }}.{{ package }}-compile-{{ emacs-version }} {{ common-options }}
+    nix build {{ rice-flake }}\#checks.{{ arch }}.{{ package }}-compile-{{ emacs-version }} {{ common-options }} --print-build-logs
 
 # Enter a shell for running tests
 shell-emacs:
