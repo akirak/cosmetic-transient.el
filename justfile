@@ -31,5 +31,5 @@ check-compile:
     nix build {{ rice-flake }}\#checks.{{ arch }}.{{ package }}-compile-{{ emacs-version }} {{ common-options }} --print-build-logs
 
 # Enter a shell for running tests
-shell-emacs:
-    nix shell {{ rice-flake }}\#{{ emacs-version }}-with-packages {{ common-options }}
+shell-emacs *OPTIONS:
+    nix shell {{ rice-flake }}\#{{ emacs-version }}-with-packages {{ common-options }} {{ OPTIONS }}
