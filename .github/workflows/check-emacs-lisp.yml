@@ -18,3 +18,4 @@ jobs:
     with:
       melpa: github:akirak/melpa/akirak
       systems: github:nix-systems/x86_64-linux
+      lock-dir: ''
