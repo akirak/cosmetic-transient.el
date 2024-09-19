@@ -44,9 +44,9 @@
 
 (defcustom cosmetic-transient-language-formatters
   '((nix-ts-mode
-     :minor-mode alejandra-on-save-mode
-     :buffer-formatter alejandra-buffer
-     :region-formatter alejandra-region)
+     :minor-mode nixfmt-on-save-mode
+     :buffer-formatter nixfmt-buffer
+     :region-formatter nixfmt-region)
     (elixir-ts-mode
      :minor-mode mix-format-on-save-mode
      :buffer-formatter mix-format-buffer
