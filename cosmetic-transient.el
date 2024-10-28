@@ -35,8 +35,8 @@
 (require 'cl-lib)
 (require 'subr-x)
 
-(declare-function docco-comment-statuses "ext:docco")
 (declare-function eglot--languageId "eglot")
+(declare-function docco-edit-comment-of-type "ext:docco")
 
 (defgroup cosmetic-transient nil
   "A transient for cosmetics on source code"
@@ -85,19 +85,9 @@
     :setup-children cosmetic-transient--language-formatter-children]]
   ["Linter"]
   ["Doc comments"
-   :class transient-row
    :if (lambda ()
-         (and (require 'docco nil t)
-              ;; Use a side-effect to memoize the result
-              (setq cosmetic-transient-docco-status (docco-comment-statuses))))
-   ("df"
-    (lambda ()
-      (cosmetic-transient--doc-comment-description "Function" 'function))
-    docco-edit-function-comment)
-   ("dm"
-    (lambda ()
-      (cosmetic-transient--doc-comment-description "Module" 'module))
-    docco-edit-module-comment)]
+         (require 'docco nil t))
+   ("c" "Edit a comment" docco-edit-comment-of-type)]
   (interactive)
   (setq cosmetic-transient-language-formatter
         (cosmetic-transient--language-formatter-settings))
@@ -107,15 +97,6 @@
 
 (defun cosmetic-transient--eglot-p ()
   (bound-and-true-p eglot--managed-mode))
-
-;;;; Documentation comments
-
-(defun cosmetic-transient--doc-comment-description (name symbol)
-  (format "%s: %s"
-          name
-          (if (alist-get symbol cosmetic-transient-docco-status)
-              "Exists"
-            "Not exists")))
 
 ;;;; Language-specific formatters
 
