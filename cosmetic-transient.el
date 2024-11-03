@@ -187,7 +187,7 @@
   (set (oref obj variable) (oset obj value value)))
 
 (cl-defmethod transient-format-value ((obj cosmetic-transient-language))
-  (if-let (value (oref obj value))
+  (if-let* ((value (oref obj value)))
       (concat
        (propertize "(" 'face 'transient-inactive-value)
        (propertize (format "%s" value)
@@ -216,8 +216,8 @@
 
 (defun cosmetic-transient--region-language (node-or-region)
   (if (treesit-node-p node-or-region)
-      (when-let (func (alist-get (treesit-node-language node-or-region)
-                                 cosmetic-transient-ts-language-detectors))
+      (when-let* ((func (alist-get (treesit-node-language node-or-region)
+                                 cosmetic-transient-ts-language-detectors)))
         (funcall func node-or-region))))
 
 (defun cosmetic-transient--string-region-at (pos)
