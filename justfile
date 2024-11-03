@@ -2,7 +2,7 @@ rice-flake := "github:emacs-twist/rice-config"
 
 melpa := "github:akirak/melpa/akirak"
 
-common-options := "--override-input rice-src \"path:$PWD\" --override-input melpa " + quote(melpa)
+common-options := "--override-input rice-src \"path:$(readlink -e $PWD)\" --override-input melpa " + quote(melpa)
 
 emacs-version := "emacs-release-snapshot"
 
