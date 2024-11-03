@@ -14,7 +14,7 @@ on:
 
 jobs:
   byte-compile:
-    uses: emacs-twist/elisp-workflows/.github/workflows/byte-compile.yml@master
+    uses: emacs-twist/elisp-workflows/.github/workflows/compile-and-test.yml@master
     with:
       melpa: github:akirak/melpa/akirak
       systems: github:nix-systems/x86_64-linux
