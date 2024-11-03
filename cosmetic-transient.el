@@ -43,20 +43,20 @@
   :group 'transient)
 
 (defcustom cosmetic-transient-language-formatters
-  '((nix-ts-mode
+  '((nix
      :minor-mode nixfmt-on-save-mode
      :buffer-formatter nixfmt-buffer
      :region-formatter nixfmt-region)
-    (elixir-ts-mode
+    (elixir
      :minor-mode mix-format-on-save-mode
      :buffer-formatter mix-format-buffer
      :region-formatter mix-format-region)
-    (sql-mode
+    (sql
      :minor-mode sqlformat-on-save-mode
      :buffer-formatter sqlformat-buffer
      :region-formatter sqlformat-region))
   "Alist of formatter settings for specific major modes."
-  :type '(alist :key-type (symbol :tag "Major mode")
+  :type '(alist :key-type (symbol :tag "Language name")
                 :value-type plist))
 
 (defvar-local cosmetic-transient-language-formatter nil)
@@ -100,10 +100,16 @@
 
 ;;;; Language-specific formatters
 
+(defun cosmetic-transient--mode-language (mode)
+  (thread-last
+    (symbol-name mode)
+    (string-remove-suffix "-ts-mode")
+    (string-remove-suffix "-mode")
+    (intern)))
+
 (defun cosmetic-transient--language-formatter-settings ()
-  (when-let (mode (apply #'derived-mode-p
-                         (mapcar #'car cosmetic-transient-language-formatters)))
-    (assq mode cosmetic-transient-language-formatters)))
+  (assq (cosmetic-transient--mode-language major-mode)
+        cosmetic-transient-language-formatters))
 
 (defun cosmetic-transient--language-formatter-children (_)
   (let ((mode (plist-get (cdr cosmetic-transient-language-formatter) :minor-mode))
