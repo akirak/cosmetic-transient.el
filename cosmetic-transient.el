@@ -104,7 +104,10 @@
    ["String at point"
     :if-non-nil cosmetic-transient-string-node
     ("-l" cosmetic-transient-other-language)
-    ("fo" "Apply formatter for the language" cosmetic-transient-run-other-formatter)]]
+    ("fo" "Apply formatter for the language" cosmetic-transient-run-other-formatter)]
+   ;; Experimental; Is there a better way to integrate this feature?
+   ["Others"
+    ("s" "Whitespace" whitespace-cleanup)]]
   ["Linter"]
   ["Doc comments"
    :if (lambda ()
