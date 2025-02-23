@@ -253,7 +253,9 @@
            (offset (car (posn-col-row (posn-at-point beg)))))
       (goto-char beg)
       (end-of-line)
-      (replace-regexp-in-region (rx bol) (make-string offset ?\s) nil bound))))
+      (replace-regexp-in-region (rx bol) (make-string offset ?\s) nil bound)
+      (whitespace-cleanup-region beg (cdr (cosmetic-transient--bounds
+                                           (cosmetic-transient--string-region-at beg)))))))
 
 (defun cosmetic-transient-ts-js-language (node)
   "Detect the language of \"string_fragment\" node."
