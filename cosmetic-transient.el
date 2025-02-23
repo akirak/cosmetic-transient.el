@@ -119,8 +119,9 @@
   (let ((node-or-region (cosmetic-transient--string-region-at (point))))
     (setq cosmetic-transient-string-node node-or-region)
     (setq cosmetic-transient-alternative-language
-          (when node-or-region
-            (cosmetic-transient--region-language node-or-region))))
+          (or cosmetic-transient-alternative-language
+              (when node-or-region
+                (cosmetic-transient--region-language node-or-region)))))
   (transient-setup 'cosmetic-transient))
 
 ;;;; Eglot integration
