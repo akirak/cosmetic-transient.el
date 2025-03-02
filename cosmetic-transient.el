@@ -249,11 +249,12 @@
 
 (defun cosmetic-transient--apply-offset (beg)
   (save-excursion
-    (let* ((bound (cdr (cosmetic-transient--bounds (cosmetic-transient--string-region-at beg))))
-           (offset (car (posn-col-row (posn-at-point beg)))))
-      (goto-char beg)
+    (goto-char beg)
+    (let ((offset (current-column))
+          (bound (cdr (cosmetic-transient--bounds (cosmetic-transient--string-region-at beg)))))
       (end-of-line)
-      (replace-regexp-in-region (rx bol) (make-string offset ?\s) nil bound)
+      (when (> offset 0)
+        (replace-regexp-in-region (rx bol) (make-string offset ?\s) nil bound))
       (goto-char (cdr (cosmetic-transient--bounds
                        (cosmetic-transient--string-region-at beg))))
       (delete-all-space)
