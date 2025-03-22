@@ -182,13 +182,17 @@
     (set (oref obj variable) value)))
 
 (cl-defmethod transient-infix-read ((obj cosmetic-transient-language))
-  (intern (completing-read "Language: " cosmetic-transient-language-formatters
-                           nil 'require-match
-                           nil nil nil
-                           (symbol-value (oref obj variable)))))
+  (completing-read "Language: " cosmetic-transient-language-formatters
+                   nil 'require-match
+                   nil nil nil
+                   (symbol-value (oref obj variable))))
 
 (cl-defmethod transient-infix-set ((obj cosmetic-transient-language) value)
-  (set (oref obj variable) (oset obj value value)))
+  (let ((value (if (stringp value)
+                   (intern value)
+                 value)))
+    (oset obj value value)
+    (set (oref obj variable) value)))
 
 (cl-defmethod transient-format-value ((obj cosmetic-transient-language))
   (if-let* ((value (oref obj value)))
