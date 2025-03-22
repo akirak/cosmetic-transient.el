@@ -68,6 +68,12 @@
   :type '(alist :key-type (symbol :tag "Treesit major mode")
                 :value-type (repeat :tag "List of node types" string)))
 
+(defcustom cosmetic-transient-syntax-options
+  '((elixir :end-with-newline t))
+  ""
+  :type '(alist :key-type (symbol :tag "Language name based on the treesit mode")
+                :value-type (plist :tag "Options")))
+
 (defcustom cosmetic-transient-ts-language-detectors
   '((typescript . cosmetic-transient-ts-js-language))
   "Alist of functions that returns the local language of the node."
@@ -219,7 +225,13 @@
           (pcase (cosmetic-transient--bounds cosmetic-transient-string-node)
             (`(,beg . ,end)
              (funcall formatter beg end)
-             (cosmetic-transient--apply-offset beg)))
+             (cosmetic-transient--apply-offset beg
+               :end-with-newline
+               (thread-first
+                 (cosmetic-transient--mode-language major-mode)
+                 (assq cosmetic-transient-syntax-options)
+                 (cdr)
+                 (plist-get :end-with-newline)))))
         (user-error "No formatter is set"))
     (user-error "No language is set")))
 
@@ -259,7 +271,8 @@
                beg))
            end))))
 
-(defun cosmetic-transient--apply-offset (beg)
+(cl-defun cosmetic-transient--apply-offset (beg &key end-with-newline)
+  (declare (indent 1))
   (save-excursion
     (goto-char beg)
     (let ((offset (current-column))
@@ -270,7 +283,9 @@
       (goto-char (cdr (cosmetic-transient--bounds
                        (cosmetic-transient--string-region-at beg))))
       (delete-all-space)
-      (whitespace-cleanup-region beg (point)))))
+      (whitespace-cleanup-region beg (point))
+      (when end-with-newline
+        (newline-and-indent)))))
 
 (defun cosmetic-transient-ts-js-language (node)
   "Detect the language of \"string_fragment\" node."
