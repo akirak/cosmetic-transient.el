@@ -62,7 +62,8 @@
 
 (defcustom cosmetic-transient-string-ts-nodes
   '((rust "string_content")
-    (typescript "string_fragment"))
+    (typescript "string_fragment")
+    (elixir "quoted_content"))
   "Alist of tree-sitter node types for strings."
   :type '(alist :key-type (symbol :tag "Treesit major mode")
                 :value-type (repeat :tag "List of node types" string)))
