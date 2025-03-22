@@ -247,10 +247,17 @@
         (cons (1+ start) (1- (point)))))))
 
 (defun cosmetic-transient--bounds (node-or-region)
-  (if (treesit-node-p node-or-region)
-      (cons (treesit-node-start node-or-region)
-            (treesit-node-end node-or-region))
-    node-or-region))
+  (pcase-exhaustive (if (treesit-node-p node-or-region)
+                        (cons (treesit-node-start node-or-region)
+                              (treesit-node-end node-or-region))
+                      node-or-region)
+    (`(,beg . ,end)
+     (cons (save-excursion
+             (goto-char beg)
+             (if (eolp)
+                 (re-search-forward (rx word-start) end)
+               beg))
+           end))))
 
 (defun cosmetic-transient--apply-offset (beg)
   (save-excursion
