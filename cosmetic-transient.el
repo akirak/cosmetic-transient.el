@@ -52,10 +52,16 @@
      :minor-mode mix-format-on-save-mode
      :buffer-formatter mix-format-buffer
      :region-formatter mix-format-region)
+    ;; Prefer sqlfluff over sqlformat.
+    ;;
+    ;; (sql
+    ;;  :minor-mode sqlformat-on-save-mode
+    ;;  :buffer-formatter sqlformat-buffer
+    ;;  :region-formatter sqlformat-region)
     (sql
-     :minor-mode sqlformat-on-save-mode
-     :buffer-formatter sqlformat-buffer
-     :region-formatter sqlformat-region))
+     :minor-mode sqlfluff-format-on-save-mode
+     :buffer-formatter sqlfluff-format-buffer
+     :region-formatter sqlfluff-format-region))
   "Alist of formatter settings for specific major modes."
   :type '(alist :key-type (symbol :tag "Language name")
                 :value-type plist))
