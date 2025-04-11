@@ -120,46 +120,50 @@
   :completion-table
   (lambda ()
     (mapcar #'car apheleia-formatters))
-  :description "Apheleia"
+  :description "Formatter"
   :prompt "apheleia-formatter: ")
 
 ;;;; Prefix
 
 ;;;###autoload (autoload 'cosmetic-transient "cosmetic-transient" nil 'interactive)
 (transient-define-prefix cosmetic-transient ()
-  ["General status"
-   :class transient-subgroups
-   [("e"
-     eglot-list-connections
-     :description (lambda () (format "LSP: %s (eglot)" (eglot--languageId)))
-     :if cosmetic-transient--eglot-p)
-    ("e" "Enable eglot" eglot :if-not cosmetic-transient--eglot-p)
-    ("-a" cosmetic-transient-set-apheleia-formatter
-     :if cosmetic-transient--apheleia-installed-p)]]
-  ["Formatter"
-   :class transient-subgroups
-   [("fe" "Format with LSP" eglot-format-buffer
-     :if cosmetic-transient--eglot-p)
+  [:class
+   transient-columns
+   ["Apheleia"
+    :if cosmetic-transient--apheleia-installed-p
+    :class transient-row
+    ("-a" cosmetic-transient-set-apheleia-formatter)
     ("fa" "Format with Apheleia" apheleia-format-buffer
      :if cosmetic-transient--apheleia-configured-p)]
-   ;; Language-specific formatters
-   [:description
-    (lambda ()
-      (format "%s" (car cosmetic-transient-language-formatter)))
-    :if-non-nil cosmetic-transient-language-formatter
-    :setup-children cosmetic-transient--language-formatter-children]
-   ["String at point"
-    :if-non-nil cosmetic-transient-string-node
-    ("-l" cosmetic-transient-other-language)
-    ("fo" "Apply formatter for the language" cosmetic-transient-run-other-formatter)]
+   ["Eglot"
+    :if cosmetic-transient--eglot-p
+    :class transient-row
+    ("e" eglot-list-connections
+     :description (lambda () (format "LSP: %s (eglot)" (eglot--languageId))))
+    ("fe" "Format with eglot" eglot-format-buffer)]
+   ["Eglot: Not enabled"
+    :if-not cosmetic-transient--eglot-p
+    ("e" "Enable eglot" eglot)]
    ;; Experimental; Is there a better way to integrate this feature?
-   ["Others"
-    ("s" "Whitespace" whitespace-cleanup)]]
+   ["Misc"
+    :class transient-row
+    ("s" "Cleanup whitespace" whitespace-cleanup)]]
+  ;; Language-specific formatters
+  [:description
+   (lambda ()
+     (format "%s" (car cosmetic-transient-language-formatter)))
+   :if-non-nil cosmetic-transient-language-formatter
+   :setup-children cosmetic-transient--language-formatter-children]
+  ["Format the string at point"
+   :if-non-nil cosmetic-transient-string-node
+   :class transient-row
+   ("-l" cosmetic-transient-other-language)
+   ("fo" "Format" cosmetic-transient-run-other-formatter)]
   ["Linter"]
-  ["Doc comments"
+  ["Documentation comments"
    :if (lambda ()
          (require 'docco nil t))
-   ("c" "Edit a comment" docco-edit-comment-of-type)]
+   ("c" "Insert/edit a comment" docco-edit-comment-of-type)]
   (interactive)
   (setq cosmetic-transient-language-formatter
         (cosmetic-transient--language-formatter-settings))
