@@ -86,6 +86,45 @@
 
 (defvar cosmetic-transient-alternative-language nil)
 
+;;;; Infixes
+
+(defclass cosmetic-transient-choice-variable (transient-variable)
+  ((variable :initarg :variable)
+   (completion-table :initarg :completion-table)))
+
+(cl-defmethod transient-init-value ((obj cosmetic-transient-choice-variable))
+  (let ((value (symbol-value (oref obj variable))))
+    (oset obj value value)
+    (set (oref obj variable) value)))
+
+(cl-defmethod transient-infix-read ((obj cosmetic-transient-choice-variable))
+  (intern (completing-read (oref obj prompt)
+                           (oref obj completion-table))))
+
+(cl-defmethod transient-infix-set ((obj cosmetic-transient-choice-variable) value)
+  (set (oref obj variable) (oset obj value value)))
+
+(cl-defmethod transient-format-value ((obj cosmetic-transient-choice-variable))
+  (if-let* ((value (oref obj value)))
+      (concat
+       (propertize "(" 'face 'transient-inactive-value)
+       (if value
+           (propertize (format "%s" value) 'face 'transient-value)
+         (propertize "nil" 'face 'transient-inactive-value))
+       (propertize ")" 'face 'transient-inactive-value))
+    ""))
+
+(transient-define-infix cosmetic-transient-set-apheleia-formatter ()
+  :class 'cosmetic-transient-choice-variable
+  :variable 'apheleia-formatter
+  :completion-table
+  (lambda ()
+    (mapcar #'car apheleia-formatters))
+  :description "Apheleia"
+  :prompt "apheleia-formatter: ")
+
+;;;; Prefix
+
 ;;;###autoload (autoload 'cosmetic-transient "cosmetic-transient" nil 'interactive)
 (transient-define-prefix cosmetic-transient ()
   ["General status"
@@ -94,12 +133,15 @@
      eglot-list-connections
      :description (lambda () (format "LSP: %s (eglot)" (eglot--languageId)))
      :if cosmetic-transient--eglot-p)
-    ("e" "Enable eglot" eglot :if-not cosmetic-transient--eglot-p)]]
+    ("e" "Enable eglot" eglot :if-not cosmetic-transient--eglot-p)
+    ("-a" cosmetic-transient-set-apheleia-formatter
+     :if cosmetic-transient--apheleia-installed-p)]]
   ["Formatter"
    :class transient-subgroups
-   [:if
-    cosmetic-transient--eglot-p
-    ("fe" "Format with LSP" eglot-format-buffer)]
+   [("fe" "Format with LSP" eglot-format-buffer
+     :if cosmetic-transient--eglot-p)
+    ("fa" "Format with Apheleia" apheleia-format-buffer
+     :if cosmetic-transient--apheleia-configured-p)]
    ;; Language-specific formatters
    [:description
     (lambda ()
@@ -133,6 +175,15 @@
 
 (defun cosmetic-transient--eglot-p ()
   (bound-and-true-p eglot--managed-mode))
+
+;;;; Apheleia integration
+
+(defun cosmetic-transient--apheleia-installed-p ()
+  (require 'apheleia nil t))
+
+(defun cosmetic-transient--apheleia-configured-p ()
+  (or (bound-and-true-p apheleia-mode)
+      (bound-and-true-p apheleia-formatter)))
 
 ;;;; Language-specific formatters
 
