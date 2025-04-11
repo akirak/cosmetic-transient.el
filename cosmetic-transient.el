@@ -51,17 +51,9 @@
     (elixir
      :minor-mode mix-format-on-save-mode
      :buffer-formatter mix-format-buffer
-     :region-formatter mix-format-region)
-    ;; Prefer sqlfluff over sqlformat.
-    ;;
-    ;; (sql
-    ;;  :minor-mode sqlformat-on-save-mode
-    ;;  :buffer-formatter sqlformat-buffer
-    ;;  :region-formatter sqlformat-region)
-    (sql
-     :minor-mode sqlfluff-format-on-save-mode
-     :buffer-formatter sqlfluff-format-buffer
-     :region-formatter sqlfluff-format-region))
+     :region-formatter mix-format-region))
+  ;; There is no well-accepted standard formatter for SQL, so it is not
+  ;; supported out of the box.
   "Alist of formatter settings for specific major modes."
   :type '(alist :key-type (symbol :tag "Language name")
                 :value-type plist))
