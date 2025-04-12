@@ -38,6 +38,8 @@
 
 (declare-function eglot--languageId "eglot")
 (declare-function docco-edit-comment-of-type "ext:docco")
+(defvar-local apheleia-formatter)
+(defvar apheleia-formatters)
 
 (defgroup cosmetic-transient nil
   "A transient for cosmetics on source code"
