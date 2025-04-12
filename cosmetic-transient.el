@@ -1,6 +1,6 @@
 ;;; cosmetic-transient.el --- A transient for cosmetics on source code -*- lexical-binding: t -*-
 
-;; Copyright (C) 2024 Akira Komamura
+;; Copyright (C) 2024-2025 Akira Komamura
 
 ;; Author: Akira Komamura <akira.komamura@gmail.com>
 ;; Version: 0.1
