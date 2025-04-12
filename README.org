@@ -7,6 +7,7 @@ This Emacs transient command lets you dispatch tools such as formatters and lint
 - [ ] lsp-mode
 **** Formatting using an external program
 - [X] Any formatter defined using [[https://github.com/purcell/emacs-reformatter][reformatter]]
+- [X] Configure and run [[https://github.com/radian-software/apheleia][apheleia]] for the local buffer
 *** Linting
 - [ ] Integrating (possibly multiple) external programs for linting
 *** Documentation
