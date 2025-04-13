@@ -38,9 +38,7 @@
 
 (declare-function eglot--languageId "eglot")
 (declare-function docco-edit-comment-of-type "ext:docco")
-(if (version<= "31" emacs-version)
-    (defvar-local apheleia-formatter)
-  (defvar apheleia-formatter))
+(defvar apheleia-formatter)
 (defvar apheleia-formatters)
 
 (defgroup cosmetic-transient nil
