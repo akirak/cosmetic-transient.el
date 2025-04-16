@@ -53,7 +53,11 @@
     (elixir
      :minor-mode mix-format-on-save-mode
      :buffer-formatter mix-format-buffer
-     :region-formatter mix-format-region))
+     :region-formatter mix-format-region)
+    (ocaml
+     :minor-mode ocamlformat-on-save-mode
+     :buffer-formatter ocamlformat-buffer
+     :region-formatter ocamlformat-region))
   ;; There is no well-accepted standard formatter for SQL, so it is not
   ;; supported out of the box.
   "Alist of formatter settings for specific major modes."
@@ -194,11 +198,14 @@
 ;;;; Language-specific formatters
 
 (defun cosmetic-transient--mode-language (mode)
-  (thread-last
-    (symbol-name mode)
-    (string-remove-suffix "-ts-mode")
-    (string-remove-suffix "-mode")
-    (intern)))
+  (cl-case mode
+    ((neocaml-mode tuareg-mode)
+     'ocaml)
+    (otherwise (thread-last
+                 (symbol-name mode)
+                 (string-remove-suffix "-ts-mode")
+                 (string-remove-suffix "-mode")
+                 (intern)))))
 
 (defun cosmetic-transient--language-formatter-settings ()
   (assq (cosmetic-transient--mode-language major-mode)
