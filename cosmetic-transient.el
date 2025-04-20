@@ -57,7 +57,11 @@
     (ocaml
      :minor-mode ocamlformat-on-save-mode
      :buffer-formatter ocamlformat-buffer
-     :region-formatter ocamlformat-region))
+     :region-formatter ocamlformat-region)
+    (sql
+     :minor-mode sqlformat-on-save-mode
+     :buffer-formatter sqlformat-buffer
+     :region-formatter sqlformat-region))
   ;; There is no well-accepted standard formatter for SQL, so it is not
   ;; supported out of the box.
   "Alist of formatter settings for specific major modes."
