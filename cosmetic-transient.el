@@ -199,7 +199,7 @@
 
 (defun cosmetic-transient--mode-language (mode)
   (cl-case mode
-    ((neocaml-mode tuareg-mode)
+    ((neocaml-mode neocamli-mode tuareg-mode)
      'ocaml)
     (otherwise (thread-last
                  (symbol-name mode)
