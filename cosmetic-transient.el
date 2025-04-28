@@ -137,6 +137,7 @@
 
 ;;;###autoload (autoload 'cosmetic-transient "cosmetic-transient" nil 'interactive)
 (transient-define-prefix cosmetic-transient ()
+  :refresh-suffixes t
   [:class
    transient-columns
    ["Apheleia"
