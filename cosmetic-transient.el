@@ -128,8 +128,9 @@
   :class 'cosmetic-transient-choice-variable
   :variable 'apheleia-formatter
   :completion-table
-  (lambda ()
-    (mapcar #'car apheleia-formatters))
+  (lambda (string pred action)
+    (complete-with-action action (mapcar #'car apheleia-formatters)
+                          string pred))
   :description "Formatter"
   :prompt "apheleia-formatter: ")
 
