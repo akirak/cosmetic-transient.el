@@ -165,7 +165,10 @@
    (lambda ()
      (format "%s" (car cosmetic-transient-language-formatter)))
    :if-non-nil cosmetic-transient-language-formatter
-   :setup-children cosmetic-transient--language-formatter-children]
+   :setup-children
+   (lambda (_)
+     (transient-parse-suffixes 'cosmetic-transient
+                               (cosmetic-transient--language-formatter-children)))]
   ["Format the string at point"
    :if-non-nil cosmetic-transient-string-node
    :class transient-row
@@ -217,33 +220,29 @@
   (assq (cosmetic-transient--mode-language major-mode)
         cosmetic-transient-language-formatters))
 
-(defun cosmetic-transient--language-formatter-children (_)
+(defun cosmetic-transient--language-formatter-children ()
   (let ((mode (plist-get (cdr cosmetic-transient-language-formatter) :minor-mode))
         (bfmt (plist-get (cdr cosmetic-transient-language-formatter) :buffer-formatter))
         (rfmt (plist-get (cdr cosmetic-transient-language-formatter) :region-formatter)))
     (thread-last
       (list (when mode
-              (list :key "fm"
-                    :description (format "Mode: %s (%s)"
-                                         (if (and (boundp mode)
-                                                  (symbol-value mode))
-                                             "Enabled"
-                                           "Disabled")
-                                         mode)
-                    :command mode))
+              (list "fm"
+                    (format "Mode: %s (%s)"
+                            (if (and (boundp mode)
+                                     (symbol-value mode))
+                                "Enabled"
+                              "Disabled")
+                            mode)
+                    mode))
             (when bfmt
-              (list :key "fb"
-                    :description (format "%s (on buffer)" bfmt)
-                    :command bfmt))
+              (list "fb"
+                    (format "%s (on buffer)" bfmt)
+                    bfmt))
             (when (and rfmt (use-region-p))
-              (list :key "fr"
-                    :description (format "%s (on region)" rfmt)
-                    :command rfmt)))
-      (delq nil)
-      (mapcar (lambda (plist)
-                (list transient--default-child-level
-                      'transient-suffix
-                      plist))))))
+              (list "fr"
+                    (format "%s (on region)" rfmt)
+                    rfmt)))
+      (delq nil))))
 
 ;;;; Formatter for another language
 
