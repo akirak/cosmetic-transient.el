@@ -221,28 +221,26 @@
         cosmetic-transient-language-formatters))
 
 (defun cosmetic-transient--language-formatter-children ()
-  (let ((mode (plist-get (cdr cosmetic-transient-language-formatter) :minor-mode))
-        (bfmt (plist-get (cdr cosmetic-transient-language-formatter) :buffer-formatter))
-        (rfmt (plist-get (cdr cosmetic-transient-language-formatter) :region-formatter)))
-    (thread-last
-      (list (when mode
-              (list "fm"
-                    (format "Mode: %s (%s)"
-                            (if (and (boundp mode)
-                                     (symbol-value mode))
-                                "Enabled"
-                              "Disabled")
-                            mode)
-                    mode))
-            (when bfmt
-              (list "fb"
-                    (format "%s (on buffer)" bfmt)
-                    bfmt))
-            (when (and rfmt (use-region-p))
-              (list "fr"
-                    (format "%s (on region)" rfmt)
-                    rfmt)))
-      (delq nil))))
+  (pcase (cdr cosmetic-transient-language-formatter)
+    ((map :minor-mode
+          :buffer-formatter
+          :region-formatter)
+     (vector `("fm" ,(format "Mode: %s (%s)"
+                             (if (and (boundp minor-mode)
+                                      (symbol-value minor-mode))
+                                 "Enabled"
+                               "Disabled")
+                             minor-mode)
+               ,minor-mode
+               :if (lambda () (fboundp ',minor-mode)))
+             `("fb" ,(format "%s (on buffer)" buffer-formatter)
+               ,buffer-formatter
+               :if (lambda () (fboundp ',buffer-formatter)))
+             `("fr" ,(format "%s (on region)" region-formatter)
+               ,region-formatter
+               :if (lambda ()
+                     (and (fboundp ',region-formatter)
+                          (use-region-p))))))))
 
 ;;;; Formatter for another language
 
