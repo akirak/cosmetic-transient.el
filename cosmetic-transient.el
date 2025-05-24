@@ -35,6 +35,7 @@
 (require 'cl-lib)
 (require 'subr-x)
 (require 'treesit)
+(require 'map)
 
 (declare-function eglot--languageId "eglot")
 (declare-function docco-edit-comment-of-type "ext:docco")
