@@ -4,7 +4,7 @@
 
 ;; Author: Akira Komamura <akira.komamura@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "29.1"))
+;; Package-Requires: ((emacs "29.1") (transient "0.8.8"))
 ;; Keywords: convenience text tools files
 ;; URL: https://github.com/akirak/cosmetic-transient.el
 
